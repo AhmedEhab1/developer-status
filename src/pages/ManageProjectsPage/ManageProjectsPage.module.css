@@ -1,0 +1,349 @@
+/* Page layout — break out of the centered .main container */
+.page {
+  display: flex;
+  gap: 0;
+  min-height: calc(100vh - 80px);
+  margin: -1.5rem;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: 1.25rem 0 1.25rem 50px;
+  align-self: stretch;
+}
+
+.sidebarTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 0.25rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 0.5rem;
+}
+
+.navItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.navItem:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.navItemActive {
+  color: var(--color-primary);
+  background: #eff6ff;
+  border-right: 3px solid var(--color-primary);
+  font-weight: 600;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 1.5rem 2rem;
+}
+
+.section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.sectionDesc {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* Day grid */
+.dayGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.dayLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dayLabel input[type='checkbox'] {
+  accent-color: var(--color-primary);
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Forms */
+.form {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.input {
+  flex: 1;
+  max-width: 400px;
+}
+
+.addBtn {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.addBtn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+/* Register form */
+.regForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.regRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.regField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 480px;
+}
+
+.regField label {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.regField input,
+.regField select {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.regSubmit {
+  padding-top: 25px;
+}
+
+.successMsg {
+  background: #f0fdf4;
+  color: #15803d;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  border: 1px solid #bbf7d0;
+  margin-bottom: 0.75rem;
+}
+
+/* Lists */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+}
+
+.itemInactive {
+  opacity: 0.6;
+}
+
+.itemInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.projectName {
+  font-weight: 500;
+}
+
+.itemActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Badges */
+.inactiveBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.leadBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.devBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #f0fdf4;
+  color: #15803d;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.platformBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #f3e8ff;
+  color: #7c3aed;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.levelBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+/* Buttons */
+.promoteBtn {
+  background: transparent;
+  color: #1d4ed8;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  border: 1px solid #1d4ed8;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.promoteBtn:hover {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.demoteBtn {
+  background: transparent;
+  color: #f59e0b;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  border: 1px solid #f59e0b;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.demoteBtn:hover {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.levelSelect {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.deactivateBtn {
+  background: transparent;
+  color: #f59e0b;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  border: 1px solid #f59e0b;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.deactivateBtn:hover {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.activateBtn {
+  background: transparent;
+  color: #10b981;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  border: 1px solid #10b981;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.activateBtn:hover {
+  background: #10b981;
+  color: #fff;
+}
+
+.deleteBtn {
+  background: transparent;
+  color: var(--color-danger);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--color-danger);
+}
+
+.deleteBtn:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.empty {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 2rem 1rem;
+  font-style: italic;
+}
