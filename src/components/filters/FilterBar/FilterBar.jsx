@@ -1,4 +1,4 @@
-import { PLATFORMS, PLATFORM_LABELS } from '../../../utils/constants';
+import { PLATFORMS, PLATFORM_LABELS, TICKET_STATUS, STATUS_LABELS } from '../../../utils/constants';
 import styles from './FilterBar.module.css';
 
 export default function FilterBar({
@@ -13,6 +13,8 @@ export default function FilterBar({
   onDateChange,
   selectedPlatform,
   onPlatformChange,
+  selectedStatus,
+  onStatusChange,
 }) {
   return (
     <div className={styles.bar}>
@@ -59,6 +61,22 @@ export default function FilterBar({
           {Object.entries(PLATFORMS).map(([key, value]) => (
             <option key={key} value={value}>
               {PLATFORM_LABELS[value]}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className={styles.filter}>
+        <label htmlFor="filterStatus">Status</label>
+        <select
+          id="filterStatus"
+          value={selectedStatus}
+          onChange={(e) => onStatusChange(e.target.value)}
+        >
+          <option value="">All Statuses</option>
+          {Object.entries(TICKET_STATUS).map(([key, value]) => (
+            <option key={key} value={value}>
+              {STATUS_LABELS[value]}
             </option>
           ))}
         </select>

@@ -16,6 +16,14 @@ export default function TicketCard({
   onPendingUpdate,
 }) {
   const hasPending = ticket.pendingApproval || ticket.pendingChanges;
+
+  function formatDate(ts) {
+    if (!ts) return null;
+    const date = ts.toDate ? ts.toDate() : new Date(ts);
+    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  const createdDate = formatDate(ticket.createdAt);
   const projectMap = projects
     ? Object.fromEntries(projects.map((p) => [p.id, p.name]))
     : {};
@@ -162,6 +170,9 @@ export default function TicketCard({
               {ticket.notes || (isTeamLead ? 'Click to add notes...' : '')}
             </p>
           )}
+          {createdDate && (
+            <p className={styles.createdDate}>Created: {createdDate}</p>
+          )}
         </div>
       )}
 
@@ -181,6 +192,9 @@ export default function TicketCard({
             </div>
             {ticket.notes && (
               <p className={styles.notes}>{ticket.notes}</p>
+            )}
+            {createdDate && (
+              <p className={styles.createdDate}>Created: {createdDate}</p>
             )}
           </div>
 
@@ -265,6 +279,9 @@ export default function TicketCard({
           </div>
           {ticket.notes && (
             <p className={styles.notes}>{ticket.notes}</p>
+          )}
+          {createdDate && (
+            <p className={styles.createdDate}>Created: {createdDate}</p>
           )}
         </div>
       )}

@@ -5,7 +5,7 @@ import { useProjects } from '../../hooks/useProjects';
 import { useTickets } from '../../hooks/useTickets';
 import { useSettings } from '../../hooks/useSettings';
 import { dataService } from '../../services/data';
-import { USER_ROLES, DAY_NAMES } from '../../utils/constants';
+import { USER_ROLES, DAY_NAMES, TICKET_STATUS } from '../../utils/constants';
 import FilterBar from '../../components/filters/FilterBar/FilterBar';
 import DeveloperSection from '../../components/developers/DeveloperSection/DeveloperSection';
 import TicketForm from '../../components/tickets/TicketForm/TicketForm';
@@ -23,6 +23,7 @@ export default function HomePage() {
   const [filterProjectId, setFilterProjectId] = useState('');
   const [filterDate, setFilterDate] = useState('');
   const [filterPlatform, setFilterPlatform] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingTicket, setEditingTicket] = useState(null);
 
@@ -59,7 +60,25 @@ export default function HomePage() {
   }, [settings.updateDays]);
 
   const filteredTickets = useMemo(() => {
-    let result = tickets;
+    const now = Date.now();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+
+    function tsToMs(ts) {
+      if (!ts) return null;
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.getTime();
+    }
+
+    function isArchivedCompleted(ticket) {
+      if (ticket.status !== TICKET_STATUS.COMPLETED) return false;
+      // completedAt is set when a ticket officially becomes completed.
+      // Fall back to createdAt for old tickets that predate this field.
+      const ms = tsToMs(ticket.completedAt) ?? tsToMs(ticket.createdAt);
+      if (ms === null) return false;
+      return now - ms > oneDayMs;
+    }
+
+    let result = tickets.filter((t) => !isArchivedCompleted(t));
     if (filterUserId) {
       result = result.filter((t) => t.userId === filterUserId);
     }
@@ -76,8 +95,11 @@ export default function HomePage() {
         return date >= dayStart && date <= dayEnd;
       });
     }
+    if (filterStatus) {
+      result = result.filter((t) => t.status === filterStatus);
+    }
     return result;
-  }, [tickets, filterUserId, filterProjectId, filterDate]);
+  }, [tickets, filterUserId, filterProjectId, filterDate, filterStatus]);
 
   const displayUsers = useMemo(() => {
     let result = users;
@@ -98,19 +120,18 @@ export default function HomePage() {
 
   // Save from the TicketForm (new ticket or editing existing)
   async function handleSave(data) {
+    const { assignedUserId, ...ticketData } = data;
     if (editingTicket) {
       if (isTeamLead) {
-        await dataService.updateTicket(editingTicket.id, data);
+        await dataService.updateTicket(editingTicket.id, ticketData);
       } else {
-        await dataService.submitTicketChanges(editingTicket.id, data);
+        await dataService.submitTicketChanges(editingTicket.id, ticketData);
       }
     } else {
-      const newTicket = await dataService.addTicket({
-        ...data,
-        userId: currentUser.uid,
-      });
+      const userId = assignedUserId || currentUser.uid;
+      const newTicket = await dataService.addTicket({ ...ticketData, userId });
       if (isTeamLead) {
-        await dataService.approveTicket(newTicket.id, { pendingApproval: true });
+        await dataService.approveTicket(newTicket.id, { pendingApproval: true, status: ticketData.status });
       }
     }
   }
@@ -176,12 +197,17 @@ export default function HomePage() {
         onDateChange={setFilterDate}
         selectedPlatform={filterPlatform}
         onPlatformChange={setFilterPlatform}
+        selectedStatus={filterStatus}
+        onStatusChange={setFilterStatus}
       />
 
       <div className={styles.sections}>
         {displayUsers.map((user) => {
           const userTickets = filteredTickets.filter(
             (t) => t.userId === user.uid
+          );
+          const userHistoryTickets = tickets.filter(
+            (t) => t.userId === user.uid && t.status === TICKET_STATUS.COMPLETED
           );
           const isOwner = currentUser?.uid === user.uid;
           const canDelete = isTeamLead || isOwner;
@@ -192,6 +218,7 @@ export default function HomePage() {
               key={user.uid}
               user={user}
               tickets={userTickets}
+              historyTickets={userHistoryTickets}
               projects={projects}
               canDelete={canDelete}
               canEdit={canEdit}
@@ -213,6 +240,8 @@ export default function HomePage() {
         <TicketForm
           ticket={editingTicket}
           projects={projects}
+          users={users}
+          isTeamLead={isTeamLead}
           onSave={handleSave}
           onClose={handleClose}
         />

@@ -5,6 +5,7 @@ import AppLayout from './components/layout/AppLayout/AppLayout';
 import LoginPage from './pages/LoginPage/LoginPage';
 import HomePage from './pages/HomePage/HomePage';
 import ManageProjectsPage from './pages/ManageProjectsPage/ManageProjectsPage';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 import { USER_ROLES } from './utils/constants';
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route
             path="/projects"
             element={

@@ -59,6 +59,26 @@
   background: var(--color-primary-hover);
 }
 
+.passwordLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.linkBtn:hover {
+  text-decoration: underline;
+}
+
 .footer {
   text-align: center;
   margin-top: 1.5rem;

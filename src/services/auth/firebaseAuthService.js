@@ -3,6 +3,10 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged as firebaseOnAuthStateChanged,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
+  reauthenticateWithCredential,
+  updatePassword as firebaseUpdatePassword,
+  EmailAuthProvider,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, secondaryAuth, db } from '../../config/firebase';
@@ -36,6 +40,17 @@ export const authService = {
 
   async logout() {
     await signOut(auth);
+  },
+
+  async sendPasswordResetEmail(email) {
+    await firebaseSendPasswordResetEmail(auth, email);
+  },
+
+  async changePassword(currentPassword, newPassword) {
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    await reauthenticateWithCredential(user, credential);
+    await firebaseUpdatePassword(user, newPassword);
   },
 
   onAuthStateChanged(callback) {

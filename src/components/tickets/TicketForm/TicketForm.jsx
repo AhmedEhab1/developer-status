@@ -6,6 +6,8 @@ import styles from './TicketForm.module.css';
 export default function TicketForm({
   ticket,
   projects,
+  users,
+  isTeamLead,
   onSave,
   onClose,
 }) {
@@ -13,10 +15,13 @@ export default function TicketForm({
   const availableProjects = projects.filter(
     (p) => p.active !== false || (isEditing && p.id === ticket?.projectId)
   );
+  const developers = users || [];
+
   const [taskName, setTaskName] = useState('');
   const [projectId, setProjectId] = useState('');
   const [status, setStatus] = useState(TICKET_STATUS.WILL_START);
   const [notes, setNotes] = useState('');
+  const [assignedUserId, setAssignedUserId] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -41,6 +46,10 @@ export default function TicketForm({
       setError('Please select a project');
       return;
     }
+    if (isTeamLead && !isEditing && !assignedUserId) {
+      setError('Please select a developer to assign this ticket to');
+      return;
+    }
 
     setSaving(true);
     try {
@@ -49,6 +58,7 @@ export default function TicketForm({
         projectId,
         status,
         notes: notes.trim(),
+        ...(isTeamLead && !isEditing ? { assignedUserId } : {}),
       });
       onClose();
     } catch (err) {
@@ -71,6 +81,25 @@ export default function TicketForm({
         <ErrorMessage message={error} />
 
         <form onSubmit={handleSubmit} className={styles.form}>
+          {isTeamLead && !isEditing && (
+            <div className={styles.field}>
+              <label htmlFor="assignedUser">Assign To</label>
+              <select
+                id="assignedUser"
+                value={assignedUserId}
+                onChange={(e) => setAssignedUserId(e.target.value)}
+                required
+              >
+                <option value="">Select a developer</option>
+                {developers.map((u) => (
+                  <option key={u.uid} value={u.uid}>
+                    {u.displayName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className={styles.field}>
             <label htmlFor="taskName">Task Name</label>
             <input

@@ -30,12 +30,12 @@ export default function Navbar() {
       </div>
 
       <div className={styles.right}>
-        <span className={styles.user}>
-          {currentUser?.displayName}
+        <Link to="/profile" className={styles.user}>
+          {currentUser?.displayName || currentUser?.email}
           <span className={styles.role}>
             {ROLE_LABELS[currentUser?.role]}
           </span>
-        </span>
+        </Link>
         <button onClick={handleLogout} className={styles.logout}>
           Logout
         </button>

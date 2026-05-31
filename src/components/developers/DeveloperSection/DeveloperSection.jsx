@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import TicketList from '../../tickets/TicketList/TicketList';
 import ConfirmDialog from '../../common/ConfirmDialog/ConfirmDialog';
+import TicketHistoryModal from '../../tickets/TicketHistoryModal/TicketHistoryModal';
 import { ROLE_LABELS, PLATFORM_LABELS, DEV_LEVEL_LABELS } from '../../../utils/constants';
 import styles from './DeveloperSection.module.css';
 
@@ -19,6 +20,7 @@ function formatDate(timestamp) {
 export default function DeveloperSection({
   user,
   tickets,
+  historyTickets,
   projects,
   canDelete,
   canEdit,
@@ -29,6 +31,7 @@ export default function DeveloperSection({
   onApproveAll,
 }) {
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   const lastUpdate = useMemo(() => {
     if (tickets.length === 0) return null;
@@ -66,6 +69,9 @@ export default function DeveloperSection({
           )}
         </div>
         <div className={styles.headerActions}>
+          <button className={styles.historyBtn} onClick={() => setShowHistory(true)}>
+            History{historyTickets.length > 0 ? ` (${historyTickets.length})` : ''}
+          </button>
           <span className={styles.count}>{tickets.length} ticket{tickets.length !== 1 ? 's' : ''}</span>
           {isTeamLead && hasPending && (
             <button className={styles.approveBtn} onClick={() => setShowApproveConfirm(true)}>
@@ -95,6 +101,15 @@ export default function DeveloperSection({
             onApproveAll(pendingTickets);
           }}
           onCancel={() => setShowApproveConfirm(false)}
+        />
+      )}
+
+      {showHistory && (
+        <TicketHistoryModal
+          user={user}
+          tickets={historyTickets}
+          projects={projects}
+          onClose={() => setShowHistory(false)}
         />
       )}
     </div>

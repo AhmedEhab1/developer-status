@@ -12,6 +12,12 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [forgotMode, setForgotMode] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSent, setResetSent] = useState(false);
+  const [resetError, setResetError] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+
   if (currentUser) {
     return <Navigate to="/" replace />;
   }
@@ -20,11 +26,9 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       await authService.login(email, password);
     } catch (err) {
-      console.error('Login error:', err);
       const code = err.code || '';
       if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
         setError('Incorrect email or password.');
@@ -36,6 +40,82 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleResetSubmit(e) {
+    e.preventDefault();
+    setResetError('');
+    setResetLoading(true);
+    try {
+      await authService.sendPasswordResetEmail(resetEmail);
+      setResetSent(true);
+    } catch (err) {
+      const code = err.code || '';
+      if (code === 'auth/user-not-found' || code === 'auth/invalid-email') {
+        setResetError('No account found with that email.');
+      } else {
+        setResetError(err.message || 'Failed to send reset email.');
+      }
+    } finally {
+      setResetLoading(false);
+    }
+  }
+
+  function openForgot() {
+    setResetEmail(email);
+    setResetSent(false);
+    setResetError('');
+    setForgotMode(true);
+  }
+
+  function backToLogin() {
+    setForgotMode(false);
+    setResetSent(false);
+    setResetError('');
+  }
+
+  if (forgotMode) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.card}>
+          <h1 className={styles.title}>Reset Password</h1>
+          <p className={styles.subtitle}>
+            {resetSent
+              ? 'Check your inbox for a reset link.'
+              : "Enter your email and we'll send you a reset link."}
+          </p>
+
+          {!resetSent && (
+            <>
+              <ErrorMessage message={resetError} />
+              <form onSubmit={handleResetSubmit} className={styles.form}>
+                <div className={styles.field}>
+                  <label htmlFor="resetEmail">Email</label>
+                  <input
+                    id="resetEmail"
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                    placeholder="you@company.com"
+                    autoFocus
+                  />
+                </div>
+                <button type="submit" className={styles.button} disabled={resetLoading}>
+                  {resetLoading ? 'Sending...' : 'Send Reset Email'}
+                </button>
+              </form>
+            </>
+          )}
+
+          <p className={styles.footer}>
+            <button className={styles.linkBtn} onClick={backToLogin}>
+              Back to Sign In
+            </button>
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -60,7 +140,12 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="password">Password</label>
+            <div className={styles.passwordLabel}>
+              <label htmlFor="password">Password</label>
+              <button type="button" className={styles.linkBtn} onClick={openForgot}>
+                Forgot password?
+              </button>
+            </div>
             <input
               id="password"
               type="password"

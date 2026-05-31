@@ -46,6 +46,14 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  text-decoration: none;
+  border-radius: var(--radius);
+  padding: 0.2rem 0.4rem;
+}
+
+.user:hover {
+  background: #f1f5f9;
+  text-decoration: none;
 }
 
 .role {

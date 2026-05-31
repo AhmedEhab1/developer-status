@@ -65,8 +65,13 @@ export const dataService = {
 
   async updateTicket(id, updates) {
     const { id: _id, createdAt, ...safeUpdates } = updates;
+    const extra = {};
+    if ('status' in safeUpdates) {
+      extra.completedAt = safeUpdates.status === 'completed' ? serverTimestamp() : null;
+    }
     await updateDoc(doc(db, 'tickets', id), {
       ...safeUpdates,
+      ...extra,
       updatedAt: serverTimestamp(),
     });
   },
@@ -143,16 +148,21 @@ export const dataService = {
 
   async approveTicket(id, ticket) {
     if (ticket.pendingApproval) {
+      const completedAt = ticket.status === 'completed' ? serverTimestamp() : null;
       await updateDoc(doc(db, 'tickets', id), {
         pendingApproval: false,
         pendingAt: null,
+        completedAt,
         updatedAt: serverTimestamp(),
       });
     } else if (ticket.pendingChanges) {
+      const newStatus = ticket.pendingChanges.status ?? ticket.status;
+      const completedAt = newStatus === 'completed' ? serverTimestamp() : null;
       await updateDoc(doc(db, 'tickets', id), {
         ...ticket.pendingChanges,
         pendingChanges: null,
         pendingAt: null,
+        completedAt,
         updatedAt: serverTimestamp(),
       });
     }
